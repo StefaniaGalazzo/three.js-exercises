@@ -53,13 +53,13 @@ desertColorTexture.wrapS = THREE.MirroredRepeatWrapping;
 desertColorTexture.wrapT = THREE.MirroredRepeatWrapping;
 
 //** Environment map
-const rgbeLoader = new RGBELoader();
-rgbeLoader.load("/textures/environmentMap/goegap_4k.hdr", (environmentMap) => {
-  environmentMap.mapping = THREE.EquirectangularReflectionMapping;
+// const rgbeLoader = new RGBELoader();
+// rgbeLoader.load("/textures/environmentMap/goegap_4k.hdr", (environmentMap) => {
+//   environmentMap.mapping = THREE.EquirectangularReflectionMapping;
 
-  scene.background = new THREE.Color("#149EFA");
-  scene.environment = environmentMap;
-});
+//   scene.background = new THREE.Color("#149EFA");
+//   scene.environment = environmentMap;
+// });
 
 //
 //** Objects
@@ -82,6 +82,7 @@ const sphere = new THREE.Mesh(
   new THREE.SphereGeometry(0.2, 80, 80),
   sphereMaterial
 );
+sphere.castShadow = true;
 
 // *sphere gui
 const sphereTweaks = gui.addFolder("Sphere");
@@ -157,7 +158,7 @@ function createBubble(
       (Math.random() - 0.5) / rangePositioning[1],
       (Math.random() - 0.5) / rangePositioning[2]
     );
-
+    bubble.castShadow = true;
     group.position.set(groupPositions[0], groupPositions[1], groupPositions[2]);
     group.add(bubble);
   }
@@ -191,7 +192,7 @@ function createBubble(
 // *plane material
 const planeMaterial = new THREE.MeshStandardMaterial();
 planeMaterial.map = desertColorTexture;
-planeMaterial.side = THREE.DoubleSide;
+// planeMaterial.side = THREE.DoubleSide;
 planeMaterial.roughness = 0.94;
 planeMaterial.metalness = 0.72;
 planeMaterial.displacementMap = desertHeightTexture;
@@ -204,7 +205,7 @@ const plane = new THREE.Mesh(
   new THREE.PlaneGeometry(10, 10, 150, 150),
   planeMaterial
 );
-
+plane.receiveShadow = true;
 plane.rotation.x = -Math.PI / 2;
 plane.position.y = -0.24;
 
@@ -240,17 +241,17 @@ gltfLoader1.load(
   (gltf) => {
     const cactusData = [
       {
-        position: { x: 1, y: -0.1, z: -0.08 },
+        position: { x: 0.9, y: -0.25, z: -0.08 },
         rotation: { x: 0, y: 0.5, z: 0 },
         scale: 0.03,
       },
       {
-        position: { x: -0.62, y: -0.1, z: 0 },
+        position: { x: -0.62, y: -0.25, z: 0 },
         rotation: { x: 0, y: 0, z: 0 },
         scale: 0.02,
       },
       {
-        position: { x: -0.8, y: -0.17, z: -1.5 },
+        position: { x: -0.8, y: -0.25, z: -1.5 },
         rotation: { x: 0.03, y: 0, z: -0.2 },
         scale: 0.018,
       },
@@ -261,7 +262,12 @@ gltfLoader1.load(
       cactus.position.set(item.position.x, item.position.y, item.position.z);
       cactus.scale.set(item.scale, item.scale, item.scale);
       cactus.rotation.set(item.rotation.x, item.rotation.y, item.rotation.z);
-
+      cactus.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
       const cactusTweaks = gui.addFolder("Cactus");
       cactusTweaks
         .add(cactus.position, "x")
@@ -335,19 +341,19 @@ gltfLoader2.load(
   (gltf) => {
     const cactusData = [
       {
-        position: { x: 1.22, y: -0.1, z: -0.27 },
+        position: { x: 1.22, y: -0.25, z: -0.27 },
         rotation: { x: 0, y: 0.9, z: 0 },
-        scale: 0.15,
+        scale: 0.2,
       },
       {
-        position: { x: -1, y: -0.1, z: 0 },
+        position: { x: -1, y: -0.25, z: 0 },
         rotation: { x: 0, y: 0, z: 0 },
-        scale: 0.17,
+        scale: 0.23,
       },
       {
         position: { x: 0, y: -0.17, z: -1.68 },
         rotation: { x: 0, y: 0, z: 0 },
-        scale: 0.15,
+        scale: 0.25,
       },
     ];
     cactusData.forEach((item) => {
@@ -356,7 +362,12 @@ gltfLoader2.load(
       cactus.position.set(item.position.x, item.position.y, item.position.z);
       cactus.scale.set(item.scale, item.scale, item.scale);
       cactus.rotation.set(item.rotation.x, item.rotation.y, item.rotation.z);
-
+      cactus.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
       const cactusTweaks = gui.addFolder("Pipe Cactus");
       cactusTweaks
         .add(cactus.position, "x")
@@ -425,6 +436,61 @@ gltfLoader2.load(
 );
 //
 
+// **Lights
+// Ambient light
+const ambientLight = new THREE.AmbientLight(0xffffff, 3);
+const ambientlLightTweaks = gui.addFolder("Ambient Light");
+ambientlLightTweaks.add(ambientLight, "intensity").min(0).max(8).step(0.001);
+scene.add(ambientLight);
+
+// Directional
+const directionalLight = new THREE.DirectionalLight();
+directionalLight.position.set(2, 5, 2.66);
+directionalLight.intensity = 2.8;
+directionalLight.castShadow = true;
+
+directionalLight.shadow.mapSize.width = 1024;
+directionalLight.shadow.mapSize.height = 1024;
+
+directionalLight.shadow.radius = 5;
+
+directionalLight.shadow.camera.near = 1;
+directionalLight.shadow.camera.far = 13;
+
+directionalLight.shadow.camera.top = 2;
+directionalLight.shadow.camera.right = 2;
+directionalLight.shadow.camera.bottom = -2;
+directionalLight.shadow.camera.left = -2;
+
+const directionalLightCameraHelper = new THREE.CameraHelper(
+  directionalLight.shadow.camera
+);
+// directionalLightCameraHelper.visible = false;
+
+scene.add(directionalLight, ambientLight, directionalLightCameraHelper);
+
+const directionalLightTweaks = gui.addFolder("DirectionalLight");
+directionalLightTweaks
+  .add(directionalLight.position, "x")
+  .min(-5)
+  .max(5)
+  .step(0.001);
+directionalLightTweaks
+  .add(directionalLight.position, "y")
+  .min(-5)
+  .max(5)
+  .step(0.001);
+directionalLightTweaks
+  .add(directionalLight.position, "z")
+  .min(-5)
+  .max(5)
+  .step(0.001);
+directionalLightTweaks
+  .add(directionalLight, "intensity")
+  .min(0)
+  .max(3)
+  .step(0.001);
+
 // **Camera
 // Base camera
 const camera = new THREE.PerspectiveCamera(
@@ -433,6 +499,10 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
+
+camera.position.y = 0.35;
+camera.position.x = 0;
+camera.position.z = 1.5;
 
 scene.add(camera);
 
@@ -451,20 +521,18 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
 
 // **Animate
-
-//bubbles
-
 const clock = new THREE.Clock();
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
 
   //UPD CAMERA
   // camera.position.x = cursor.x * 1.5;
-  camera.position.y = 0.7 + cursor.y;
-  camera.position.x = Math.sin(cursor.x * Math.PI) * 3;
-  camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+  // camera.position.y = 0.7 + cursor.y;
+  // camera.position.x = Math.sin(cursor.x * Math.PI) * 3;
+  // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
   camera.lookAt(sphere.position);
 
   // Animate bubbles
@@ -479,7 +547,7 @@ const tick = () => {
   sphere.position.x = x;
   sphere.position.y = y;
 
-  // Movimento casuale per le bolle
+  // oscillazione bolle
   bubbles.forEach((bubble, index) => {
     const offset = index * 0.5;
     const bubbleTime = elapsedTime + offset;
@@ -506,8 +574,8 @@ const tick = () => {
 tick();
 
 // Helper
-// const axesHelper = new THREE.AxesHelper(2);
-// scene.add(axesHelper);
+const axesHelper = new THREE.AxesHelper(2);
+scene.add(axesHelper);
 
 // Resize
 window.addEventListener("resize", () => {
