@@ -1,0 +1,26 @@
+{
+  "name": "three-tween",
+  "version": "1.0.0",
+  "homepage": "https://github.com/cs64188/three-tween",
+  "description": "tween.min.js by threejs offical apply 'sole/tween.js'  for node package",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "three": ">= 0.91"
+  },
+  "keywords": [
+    "tweenjs",
+    "tween",
+    "three-tween",
+    "threejs",
+    "three.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cs64188/three-tween.git"
+  },
+  "author": "tomyl",
+  "license": "MIT"
+}
