@@ -14,10 +14,12 @@ const cursor = {
 const canvas = document.querySelector("canvas.webgl");
 
 // **Debug
+const debugObject = {};
+
 const gui = new GUI({
   closeFolders: true,
 });
-
+gui.close();
 // **Scene
 const scene = new THREE.Scene();
 
@@ -53,13 +55,16 @@ desertColorTexture.wrapS = THREE.MirroredRepeatWrapping;
 desertColorTexture.wrapT = THREE.MirroredRepeatWrapping;
 
 //** Environment map
-// const rgbeLoader = new RGBELoader();
-// rgbeLoader.load("/textures/environmentMap/goegap_4k.hdr", (environmentMap) => {
-//   environmentMap.mapping = THREE.EquirectangularReflectionMapping;
+const rgbeLoader = new RGBELoader();
+rgbeLoader.load("/textures/environmentMap/goegap_4k.hdr", (environmentMap) => {
+  environmentMap.mapping = THREE.EquirectangularReflectionMapping;
 
-//   scene.background = new THREE.Color("#149EFA");
-//   scene.environment = environmentMap;
-// });
+  scene.background = new THREE.Color("lightblue");
+  sphereMaterial.envMap = environmentMap;
+  // planeMaterial.envMap = null;
+
+  // scene.environment = environmentMap;
+});
 
 //
 //** Objects
@@ -194,7 +199,7 @@ const planeMaterial = new THREE.MeshStandardMaterial();
 planeMaterial.map = desertColorTexture;
 // planeMaterial.side = THREE.DoubleSide;
 planeMaterial.roughness = 0.94;
-planeMaterial.metalness = 0.72;
+planeMaterial.metalness = 0.35;
 planeMaterial.displacementMap = desertHeightTexture;
 planeMaterial.displacementScale = 0.5;
 
@@ -232,6 +237,7 @@ planeTweaks
 scene.add(plane);
 
 // **Models
+// *Cactus
 const groupWhitePlane = new THREE.Group();
 groupWhitePlane.add(plane);
 groupWhitePlane.position.y = -0.5;
@@ -434,17 +440,117 @@ gltfLoader2.load(
     console.error("Error loading GLB model", error);
   }
 );
-//
+// end cactus
+// *cloud
+const cloudGltfLoader = new GLTFLoader();
+cloudGltfLoader.load(
+  "/models/Cloud.glb",
+  (gltf) => {
+    const cloudData = [
+      {
+        position: { x: 3.3, y: 2, z: -0.27 },
+        scale: 1.2,
+      },
+      {
+        position: { x: -3, y: 2.5, z: 0 },
+        scale: 2,
+      },
+      {
+        position: { x: 0, y: 3, z: 3 },
+        scale: 1.5,
+      },
+      {
+        position: { x: 0, y: 3, z: -3 },
+        scale: 1.5,
+      },
+    ];
+    cloudData.forEach((item) => {
+      // istanza del modello del cactus
+      const cloud = gltf.scene.clone();
+      cloud.position.set(item.position.x, item.position.y, item.position.z);
+      cloud.scale.set(item.scale, item.scale, item.scale);
+
+      const cloudTweaks = gui.addFolder("Cloud");
+      cloudTweaks
+        .add(cloud.position, "x")
+        .min(-3)
+        .max(3)
+        .step(0.01)
+        .name("position x");
+      cloudTweaks
+        .add(cloud.position, "y")
+        .min(-3)
+        .max(3)
+        .step(0.01)
+        .name("position y");
+      cloudTweaks
+        .add(cloud.position, "z")
+        .min(-3)
+        .max(3)
+        .step(0.01)
+        .name("position z");
+
+      cloudTweaks
+        .add(cloud.scale, "x")
+        .min(0)
+        .max(1)
+        .step(0.01)
+        .name("scale x");
+      cloudTweaks
+        .add(cloud.scale, "y")
+        .min(0)
+        .max(1)
+        .step(0.01)
+        .name("scale y");
+      cloudTweaks
+        .add(cloud.scale, "z")
+        .min(0)
+        .max(1)
+        .step(0.01)
+        .name("scale z");
+
+      cloudTweaks
+        .add(cloud.rotation, "x")
+        .min(-3)
+        .max(3)
+        .step(0.01)
+        .name("rotation x");
+      cloudTweaks
+        .add(cloud.rotation, "y")
+        .min(-3)
+        .max(3)
+        .step(0.01)
+        .name("rotation y");
+      cloudTweaks
+        .add(cloud.rotation, "z")
+        .min(-3)
+        .max(3)
+        .step(0.01)
+        .name("rotation z");
+      groupWhitePlane.add(cloud);
+    });
+    scene.add(cloud);
+  },
+  undefined,
+  (error) => {
+    console.error("Error loading GLB model", error);
+  }
+);
 
 // **Lights
 // Ambient light
-const ambientLight = new THREE.AmbientLight(0xffffff, 3);
+debugObject.color = "#ccc";
+const ambientLight = new THREE.AmbientLight("#fff4f0", 3);
 const ambientlLightTweaks = gui.addFolder("Ambient Light");
 ambientlLightTweaks.add(ambientLight, "intensity").min(0).max(8).step(0.001);
+
+ambientlLightTweaks.addColor(debugObject, "color").onChange(() => {
+  ambientLight.color.set(debugObject.color);
+});
 scene.add(ambientLight);
 
 // Directional
-const directionalLight = new THREE.DirectionalLight();
+const directionalLight = new THREE.DirectionalLight("#fff");
 directionalLight.position.set(2, 5, 2.66);
 directionalLight.intensity = 2.8;
 directionalLight.castShadow = true;
@@ -457,19 +563,24 @@ directionalLight.shadow.radius = 5;
 directionalLight.shadow.camera.near = 1;
 directionalLight.shadow.camera.far = 13;
 
-directionalLight.shadow.camera.top = 2;
-directionalLight.shadow.camera.right = 2;
-directionalLight.shadow.camera.bottom = -2;
-directionalLight.shadow.camera.left = -2;
+// directionalLight.shadow.camera.top = 1;
+// directionalLight.shadow.camera.right = 2;
+// directionalLight.shadow.camera.bottom = -2;
+// directionalLight.shadow.camera.left = -2;
 
-const directionalLightCameraHelper = new THREE.CameraHelper(
-  directionalLight.shadow.camera
-);
-// directionalLightCameraHelper.visible = false;
-
-scene.add(directionalLight, ambientLight, directionalLightCameraHelper);
+scene.add(directionalLight, ambientLight);
 
 const directionalLightTweaks = gui.addFolder("DirectionalLight");
+directionalLightTweaks
+  .add(directionalLight.shadow.camera, "near")
+  .min(-5)
+  .max(5)
+  .step(0.001);
+directionalLightTweaks
+  .add(directionalLight.shadow.camera, "far")
+  .min(-5)
+  .max(5)
+  .step(0.001);
 directionalLightTweaks
   .add(directionalLight.position, "x")
   .min(-5)
@@ -500,9 +611,9 @@ const camera = new THREE.PerspectiveCamera(
   100
 );
 
-camera.position.y = 0.35;
-camera.position.x = 0;
-camera.position.z = 1.5;
+// camera.position.y = 4;
+// camera.position.x = 0;
+// camera.position.z = 10;
 
 scene.add(camera);
 
@@ -529,10 +640,10 @@ const tick = () => {
   const elapsedTime = clock.getElapsedTime();
 
   //UPD CAMERA
-  // camera.position.x = cursor.x * 1.5;
-  // camera.position.y = 0.7 + cursor.y;
-  // camera.position.x = Math.sin(cursor.x * Math.PI) * 3;
-  // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+  // // camera.position.x = cursor.x * 1.5;
+  camera.position.y = 0.7 + cursor.y;
+  camera.position.x = Math.sin(cursor.x * Math.PI) * 3;
+  camera.position.z = 0.5 + Math.cos(cursor.x * Math.PI * 2) * 3;
   camera.lookAt(sphere.position);
 
   // Animate bubbles
@@ -574,8 +685,16 @@ const tick = () => {
 tick();
 
 // Helper
-const axesHelper = new THREE.AxesHelper(2);
-scene.add(axesHelper);
+// *haxes
+// const axesHelper = new THREE.AxesHelper(2);
+// scene.add(axesHelper);
+
+// *dir lights
+const directionalLightCameraHelper = new THREE.CameraHelper(
+  directionalLight.shadow.camera
+);
+directionalLightCameraHelper.visible = false;
+scene.add(directionalLightCameraHelper);
 
 // Resize
 window.addEventListener("resize", () => {
