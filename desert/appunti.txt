@@ -1,9 +1,6 @@
-types of textures:
-- displacement (or heigt): grayscale tone img. The dark area will be pushed "down" and the lighter will be pushed "up" the vertices in these zone
-- normal (better performances):
+resuorces:
 
-links
- Moiré pattern (wiki)
+Moiré pattern (wiki)
 TinyPNG
 poliigon.com
 3dtextures.me
