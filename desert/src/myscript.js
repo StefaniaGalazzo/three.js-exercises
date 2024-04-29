@@ -33,18 +33,10 @@ const sizes = {
 const textureLoader = new THREE.TextureLoader();
 const desertColorTexture = textureLoader.load("./textures/desert/color-2.jpg");
 // const desertAlphaTexture = textureLoader.load("./textures/desert/alpha.png");
-const desertAmbientOcclusionTexture = textureLoader.load(
-  "./textures/desert/ambientocclusion-2.jpg"
-);
-const desertHeightTexture = textureLoader.load(
-  "./textures/desert/height-3.png"
-);
-const desertNormalTexture = textureLoader.load(
-  "./textures/desert/normal-2.jpg"
-);
-const desertRoughnessTexture = textureLoader.load(
-  "./textures/desert/normal-2.jpg"
-);
+const desertAmbientOcclusionTexture = textureLoader.load("./textures/desert/ambientocclusion-2.jpg");
+const desertHeightTexture = textureLoader.load("./textures/desert/height-3.png");
+const desertNormalTexture = textureLoader.load("./textures/desert/normal-2.jpg");
+const desertRoughnessTexture = textureLoader.load("./textures/desert/normal-2.jpg");
 // const desertMatCapTexture = textureLoader.load("./textures/matcaps/1.png");
 // const desertGradientTexture = textureLoader.load("./textures/gradients/3.jpg");
 desertColorTexture.colorSpace = THREE.SRGBColorSpace;
@@ -83,10 +75,7 @@ sphereMaterial.ior = 4;
 sphereMaterial.thickness = 0.02;
 
 // *sphere object
-const sphere = new THREE.Mesh(
-  new THREE.SphereGeometry(0.2, 80, 80),
-  sphereMaterial
-);
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2, 80, 80), sphereMaterial);
 sphere.castShadow = true;
 
 // *sphere gui
@@ -96,21 +85,9 @@ sphereTweaks.add(sphereMaterial, "metalness").min(0).max(1).step(0.001);
 sphereTweaks.add(sphereMaterial, "roughness").min(0).max(1).step(0.001);
 sphereTweaks.add(sphereMaterial, "opacity").min(0).max(3).step(0.01);
 sphereTweaks.add(sphereMaterial, "iridescence").min(0).max(1).step(0.001);
-sphereTweaks
-  .add(sphereMaterial, "iridescenceIOR")
-  .min(1)
-  .max(2.333)
-  .step(0.0001);
-sphereTweaks
-  .add(sphereMaterial.iridescenceThicknessRange, "0")
-  .min(1)
-  .max(1000)
-  .step(1);
-sphereTweaks
-  .add(sphereMaterial.iridescenceThicknessRange, "1")
-  .min(1)
-  .max(1000)
-  .step(1);
+sphereTweaks.add(sphereMaterial, "iridescenceIOR").min(1).max(2.333).step(0.0001);
+sphereTweaks.add(sphereMaterial.iridescenceThicknessRange, "0").min(1).max(1000).step(1);
+sphereTweaks.add(sphereMaterial.iridescenceThicknessRange, "1").min(1).max(1000).step(1);
 sphereTweaks.add(sphereMaterial, "transmission").min(0).max(1).step(0.0001);
 sphereTweaks.add(sphereMaterial, "ior").min(1).max(10).step(0.0001);
 sphereTweaks.add(sphereMaterial, "thickness").min(0).max(1).step(0.0001);
@@ -132,13 +109,7 @@ createBubble(numOfBubs, 0.005, 0.02, [0.03, 0.2, 0.4], [0, 0, 0]);
 createBubble(numOfBubs, 0.002, 0.02, [0.47, 0.43, 0.43], [0, 0, 0]);
 createBubble(numOfBubs, 0.002, 0.02, [-0.3, 0.43, -0.3], [0, 0, 0]);
 
-function createBubble(
-  items,
-  radiusMin,
-  radiusMax,
-  groupPositions,
-  rangePositioning
-) {
+function createBubble(items, radiusMin, radiusMax, groupPositions, rangePositioning) {
   const group = new THREE.Group();
   const bubbleGeometry = new THREE.SphereGeometry(radiusMax, 32, 32);
 
@@ -152,17 +123,9 @@ function createBubble(
     // scala casuale per ogni asse (x, y, z) - valori tra 0.5 e 1.0
     const randomScale = Math.random() * 0.5 + 0.5;
 
-    bubble.scale.set(
-      scaleRatio * randomScale,
-      scaleRatio * randomScale,
-      scaleRatio * randomScale
-    );
+    bubble.scale.set(scaleRatio * randomScale, scaleRatio * randomScale, scaleRatio * randomScale);
 
-    bubble.position.set(
-      (Math.random() - 0.5) / rangePositioning[0],
-      (Math.random() - 0.5) / rangePositioning[1],
-      (Math.random() - 0.5) / rangePositioning[2]
-    );
+    bubble.position.set((Math.random() - 0.5) / rangePositioning[0], (Math.random() - 0.5) / rangePositioning[1], (Math.random() - 0.5) / rangePositioning[2]);
     bubble.castShadow = true;
     group.position.set(groupPositions[0], groupPositions[1], groupPositions[2]);
     group.add(bubble);
@@ -176,17 +139,9 @@ function createBubble(
   groupWhitSphere.scale.set(GWSscale, GWSscale, GWSscale);
 
   const groupWhitSphereTweaks = gui.addFolder("groupWhitSphere group");
-  groupWhitSphereTweaks
-    .add(groupWhitSphere.position, "x")
-    .min(-2)
-    .max(2)
-    .step(0.01);
+  groupWhitSphereTweaks.add(groupWhitSphere.position, "x").min(-2).max(2).step(0.01);
   scene.add(groupWhitSphere);
-  groupWhitSphereTweaks
-    .add(groupWhitSphere.position, "z")
-    .min(-2)
-    .max(2)
-    .step(0.01);
+  groupWhitSphereTweaks.add(groupWhitSphere.position, "z").min(-2).max(2).step(0.01);
   const bubbleGruopTweaks = gui.addFolder("Bubble group");
   bubbleGruopTweaks.add(group.position, "x").min(-2).max(2).step(0.01);
   bubbleGruopTweaks.add(group.position, "y").min(-2).max(2).step(0.01);
@@ -206,10 +161,7 @@ planeMaterial.displacementScale = 0.5;
 planeMaterial.normalMap = desertNormalTexture;
 planeMaterial.normalScale.set(0.56, -1.8);
 
-const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(10, 10, 150, 150),
-  planeMaterial
-);
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(10, 10, 150, 150), planeMaterial);
 plane.receiveShadow = true;
 plane.rotation.x = -Math.PI / 2;
 plane.position.y = -0.24;
@@ -221,18 +173,8 @@ planeTweaks.add(planeMaterial, "displacementScale").min(0).max(5).step(0.01);
 // planeTweaks.add(planeMaterial, "aoMapIntensity").min(0).max(5).step(0.01);
 planeTweaks.add(plane.position, "y").min(-2).max(2).step(0.01);
 planeTweaks.add(plane.rotation, "x").min(-2).max(2).step(0.01);
-planeTweaks
-  .add(planeMaterial.normalScale, "x")
-  .min(-4)
-  .max(4)
-  .step(0.01)
-  .name("normal scale");
-planeTweaks
-  .add(planeMaterial.normalScale, "y")
-  .min(-4)
-  .max(4)
-  .step(0.01)
-  .name("normal scale");
+planeTweaks.add(planeMaterial.normalScale, "x").min(-4).max(4).step(0.01).name("normal scale");
+planeTweaks.add(planeMaterial.normalScale, "y").min(-4).max(4).step(0.01).name("normal scale");
 
 scene.add(plane);
 
@@ -241,10 +183,13 @@ scene.add(plane);
 const groupWhitePlane = new THREE.Group();
 groupWhitePlane.add(plane);
 groupWhitePlane.position.y = -0.5;
+
 const gltfLoader1 = new GLTFLoader();
+
 gltfLoader1.load(
   "/models/Barrel-cactus.glb",
   (gltf) => {
+    console.log(gltf, "gltf");
     const cactusData = [
       {
         position: { x: 0.9, y: -0.25, z: -0.08 },
@@ -262,6 +207,7 @@ gltfLoader1.load(
         scale: 0.018,
       },
     ];
+
     cactusData.forEach((item) => {
       // istanza del modello del cactus
       const cactus = gltf.scene.clone();
@@ -274,63 +220,19 @@ gltfLoader1.load(
           child.receiveShadow = true;
         }
       });
+
       const cactusTweaks = gui.addFolder("Cactus");
-      cactusTweaks
-        .add(cactus.position, "x")
-        .min(-1)
-        .max(1)
-        .step(0.01)
-        .name("position x");
-      cactusTweaks
-        .add(cactus.position, "y")
-        .min(-1)
-        .max(1)
-        .step(0.01)
-        .name("position y");
-      cactusTweaks
-        .add(cactus.position, "z")
-        .min(-1)
-        .max(1)
-        .step(0.01)
-        .name("position z");
+      cactusTweaks.add(cactus.position, "x").min(-1).max(1).step(0.01).name("position x");
+      cactusTweaks.add(cactus.position, "y").min(-1).max(1).step(0.01).name("position y");
+      cactusTweaks.add(cactus.position, "z").min(-1).max(1).step(0.01).name("position z");
 
-      cactusTweaks
-        .add(cactus.scale, "x")
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .name("scale x");
-      cactusTweaks
-        .add(cactus.scale, "y")
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .name("scale y");
-      cactusTweaks
-        .add(cactus.scale, "z")
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .name("scale z");
+      cactusTweaks.add(cactus.scale, "x").min(0).max(1).step(0.01).name("scale x");
+      cactusTweaks.add(cactus.scale, "y").min(0).max(1).step(0.01).name("scale y");
+      cactusTweaks.add(cactus.scale, "z").min(0).max(1).step(0.01).name("scale z");
 
-      cactusTweaks
-        .add(cactus.rotation, "x")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("rotation x");
-      cactusTweaks
-        .add(cactus.rotation, "y")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("rotation y");
-      cactusTweaks
-        .add(cactus.rotation, "z")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("rotation z");
+      cactusTweaks.add(cactus.rotation, "x").min(-3).max(3).step(0.01).name("rotation x");
+      cactusTweaks.add(cactus.rotation, "y").min(-3).max(3).step(0.01).name("rotation y");
+      cactusTweaks.add(cactus.rotation, "z").min(-3).max(3).step(0.01).name("rotation z");
       groupWhitePlane.add(cactus);
     });
     scene.add(groupWhitePlane);
@@ -375,62 +277,17 @@ gltfLoader2.load(
         }
       });
       const cactusTweaks = gui.addFolder("Pipe Cactus");
-      cactusTweaks
-        .add(cactus.position, "x")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("position x");
-      cactusTweaks
-        .add(cactus.position, "y")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("position y");
-      cactusTweaks
-        .add(cactus.position, "z")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("position z");
+      cactusTweaks.add(cactus.position, "x").min(-3).max(3).step(0.01).name("position x");
+      cactusTweaks.add(cactus.position, "y").min(-3).max(3).step(0.01).name("position y");
+      cactusTweaks.add(cactus.position, "z").min(-3).max(3).step(0.01).name("position z");
 
-      cactusTweaks
-        .add(cactus.scale, "x")
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .name("scale x");
-      cactusTweaks
-        .add(cactus.scale, "y")
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .name("scale y");
-      cactusTweaks
-        .add(cactus.scale, "z")
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .name("scale z");
+      cactusTweaks.add(cactus.scale, "x").min(0).max(1).step(0.01).name("scale x");
+      cactusTweaks.add(cactus.scale, "y").min(0).max(1).step(0.01).name("scale y");
+      cactusTweaks.add(cactus.scale, "z").min(0).max(1).step(0.01).name("scale z");
 
-      cactusTweaks
-        .add(cactus.rotation, "x")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("rotation x");
-      cactusTweaks
-        .add(cactus.rotation, "y")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("rotation y");
-      cactusTweaks
-        .add(cactus.rotation, "z")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("rotation z");
+      cactusTweaks.add(cactus.rotation, "x").min(-3).max(3).step(0.01).name("rotation x");
+      cactusTweaks.add(cactus.rotation, "y").min(-3).max(3).step(0.01).name("rotation y");
+      cactusTweaks.add(cactus.rotation, "z").min(-3).max(3).step(0.01).name("rotation z");
       groupWhitePlane.add(cactus);
     });
     scene.add(cactus);
@@ -471,62 +328,17 @@ cloudGltfLoader.load(
       cloud.scale.set(item.scale, item.scale, item.scale);
 
       const cloudTweaks = gui.addFolder("Cloud");
-      cloudTweaks
-        .add(cloud.position, "x")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("position x");
-      cloudTweaks
-        .add(cloud.position, "y")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("position y");
-      cloudTweaks
-        .add(cloud.position, "z")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("position z");
+      cloudTweaks.add(cloud.position, "x").min(-3).max(3).step(0.01).name("position x");
+      cloudTweaks.add(cloud.position, "y").min(-3).max(3).step(0.01).name("position y");
+      cloudTweaks.add(cloud.position, "z").min(-3).max(3).step(0.01).name("position z");
 
-      cloudTweaks
-        .add(cloud.scale, "x")
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .name("scale x");
-      cloudTweaks
-        .add(cloud.scale, "y")
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .name("scale y");
-      cloudTweaks
-        .add(cloud.scale, "z")
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .name("scale z");
+      cloudTweaks.add(cloud.scale, "x").min(0).max(1).step(0.01).name("scale x");
+      cloudTweaks.add(cloud.scale, "y").min(0).max(1).step(0.01).name("scale y");
+      cloudTweaks.add(cloud.scale, "z").min(0).max(1).step(0.01).name("scale z");
 
-      cloudTweaks
-        .add(cloud.rotation, "x")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("rotation x");
-      cloudTweaks
-        .add(cloud.rotation, "y")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("rotation y");
-      cloudTweaks
-        .add(cloud.rotation, "z")
-        .min(-3)
-        .max(3)
-        .step(0.01)
-        .name("rotation z");
+      cloudTweaks.add(cloud.rotation, "x").min(-3).max(3).step(0.01).name("rotation x");
+      cloudTweaks.add(cloud.rotation, "y").min(-3).max(3).step(0.01).name("rotation y");
+      cloudTweaks.add(cloud.rotation, "z").min(-3).max(3).step(0.01).name("rotation z");
       groupWhitePlane.add(cloud);
     });
     scene.add(cloud);
@@ -571,45 +383,16 @@ directionalLight.shadow.camera.far = 13;
 scene.add(directionalLight, ambientLight);
 
 const directionalLightTweaks = gui.addFolder("DirectionalLight");
-directionalLightTweaks
-  .add(directionalLight.shadow.camera, "near")
-  .min(-5)
-  .max(5)
-  .step(0.001);
-directionalLightTweaks
-  .add(directionalLight.shadow.camera, "far")
-  .min(-5)
-  .max(5)
-  .step(0.001);
-directionalLightTweaks
-  .add(directionalLight.position, "x")
-  .min(-5)
-  .max(5)
-  .step(0.001);
-directionalLightTweaks
-  .add(directionalLight.position, "y")
-  .min(-5)
-  .max(5)
-  .step(0.001);
-directionalLightTweaks
-  .add(directionalLight.position, "z")
-  .min(-5)
-  .max(5)
-  .step(0.001);
-directionalLightTweaks
-  .add(directionalLight, "intensity")
-  .min(0)
-  .max(3)
-  .step(0.001);
+directionalLightTweaks.add(directionalLight.shadow.camera, "near").min(-5).max(5).step(0.001);
+directionalLightTweaks.add(directionalLight.shadow.camera, "far").min(-5).max(5).step(0.001);
+directionalLightTweaks.add(directionalLight.position, "x").min(-5).max(5).step(0.001);
+directionalLightTweaks.add(directionalLight.position, "y").min(-5).max(5).step(0.001);
+directionalLightTweaks.add(directionalLight.position, "z").min(-5).max(5).step(0.001);
+directionalLightTweaks.add(directionalLight, "intensity").min(0).max(3).step(0.001);
 
 // **Camera
 // Base camera
-const camera = new THREE.PerspectiveCamera(
-  75,
-  sizes.width / sizes.height,
-  0.1,
-  100
-);
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
 
 // camera.position.y = 4;
 // camera.position.x = 0;
@@ -690,9 +473,7 @@ tick();
 // scene.add(axesHelper);
 
 // *dir lights
-const directionalLightCameraHelper = new THREE.CameraHelper(
-  directionalLight.shadow.camera
-);
+const directionalLightCameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
 directionalLightCameraHelper.visible = false;
 scene.add(directionalLightCameraHelper);
 
